@@ -3,7 +3,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Content from './pages/Content';
-import Login from './pages/Login';
+import Login from './pages/Login'; // Login page
 import Settings from './pages/Settings';
 import RefererManager from './pages/RefererManager';
 
