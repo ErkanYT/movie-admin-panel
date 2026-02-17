@@ -15,7 +15,7 @@ const Login = () => {
         e.preventDefault();
         try {
             // In production, use env var for API URL
-            const res = await axios.post('http://localhost:5432/api/auth/login', formData);
+            const res = await axios.post('http://localhost:3000/api/auth/login', formData);
 
             // Save token
             localStorage.setItem('token', res.data.token);

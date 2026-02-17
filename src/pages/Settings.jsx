@@ -23,7 +23,7 @@ const Settings = () => {
 
     const fetchSettings = async () => {
         try {
-            const res = await axios.get('http://localhost:5432/api/settings');
+            const res = await axios.get('http://localhost:3000/api/settings');
             setSettings(res.data);
             setLoading(false);
         } catch (err) {
@@ -48,7 +48,7 @@ const Settings = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5432/api/settings/update', settings, {
+            await axios.post('http://localhost:3000/api/settings/update', settings, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessage('Settings updated successfully!');
