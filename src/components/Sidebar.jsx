@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Film, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Film, Settings, LogOut, Globe } from 'lucide-react';
 
 const Sidebar = () => {
     const navigate = useNavigate();
@@ -14,6 +14,7 @@ const Sidebar = () => {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: Film, label: 'Content', path: '/content' },
+        { icon: Globe, label: 'Referers', path: '/referers' },
         { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 

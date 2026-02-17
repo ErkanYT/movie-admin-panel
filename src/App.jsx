@@ -4,7 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Content from './pages/Content';
 import Login from './pages/Login';
+import Login from './pages/Login';
 import Settings from './pages/Settings';
+import RefererManager from './pages/RefererManager';
 
 function App() {
     return (
@@ -19,6 +21,7 @@ function App() {
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/content" element={<Content />} />
+                        <Route path="/referers" element={<RefererManager />} />
                         <Route path="/settings" element={<Settings />} />
                     </Route>
                 </Route>
