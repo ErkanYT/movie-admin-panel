@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
-import Movies from './pages/Movies';
+import Content from './pages/Content';
 
 function App() {
     return (
@@ -14,7 +14,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Navigate to="/dashboard" replace />} />
                             <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/movies" element={<Movies />} />
+                            <Route path="/content" element={<Content />} />
                         </Routes>
                     </div>
                 </main>

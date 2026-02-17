@@ -5,7 +5,7 @@ import { LayoutDashboard, Film, Settings, LogOut } from 'lucide-react';
 const Sidebar = () => {
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-        { icon: Film, label: 'Movies', path: '/movies' },
+        { icon: Film, label: 'Content', path: '/content' },
         { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 
