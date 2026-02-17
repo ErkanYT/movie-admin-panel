@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaTrash, FaPlus, FaGlobe } from 'react-icons/fa';
-import config from '../config';
+import { API_URL } from '../config';
 
 const Container = styled.div`
   padding: 20px;
@@ -157,7 +157,7 @@ const RefererManager = () => {
 
     const fetchReferers = async () => {
         try {
-            const response = await fetch(`${config.API_URL}/referers`);
+            const response = await fetch(`${API_URL}/referers`);
             const data = await response.json();
             setReferers(data);
         } catch (error) {
@@ -168,7 +168,7 @@ const RefererManager = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this referer?')) {
             try {
-                await fetch(`${config.API_URL}/referers/${id}`, {
+                await fetch(`${API_URL}/referers/${id}`, {
                     method: 'DELETE',
                 });
                 fetchReferers();
@@ -181,7 +181,7 @@ const RefererManager = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${config.API_URL}/referers`, {
+            await fetch(`${API_URL}/referers`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
