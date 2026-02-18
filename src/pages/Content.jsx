@@ -18,6 +18,11 @@ const Content = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [manageSeasonsMode, setManageSeasonsMode] = useState(null); // ID of series being managed
 
+    // Smart Form State
+    const [addMode, setAddMode] = useState('manual'); // 'manual' | 'auto'
+    const [tmdbId, setTmdbId] = useState('');
+    const [isFetchingTmdb, setIsFetchingTmdb] = useState(false);
+
     // Main Form State
     const [formData, setFormData] = useState({
         title: '',
@@ -43,6 +48,30 @@ const Content = () => {
             console.error('Error fetching content:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleFetchTMDB = async () => {
+        if (!tmdbId) return;
+        setIsFetchingTmdb(true);
+        try {
+            const { data } = await axios.get(`/api/tmdb/fetch?tmdb_id=${tmdbId}&type=${formData.type}`);
+            setFormData({
+                ...formData,
+                title: data.title,
+                description: data.description,
+                poster_url: 'https://image.tmdb.org/t/p/w500' + data.poster_url.replace('https://image.tmdb.org/t/p/w500', ''), // Ensure correct format if API returns full URL
+                backdrop_url: 'https://image.tmdb.org/t/p/original' + data.backdrop_url.replace('https://image.tmdb.org/t/p/w500', ''),
+                rating: data.rating,
+                release_date: data.release_date || new Date().toISOString().split('T')[0],
+                category_id: data.category_id
+            });
+            setAddMode('manual'); // Switch to manual to review/edit
+        } catch (error) {
+            console.error('Error fetching from TMDB:', error);
+            alert('Failed to fetch data from TMDB. Please check the ID and try again.');
+        } finally {
+            setIsFetchingTmdb(false);
         }
     };
 
@@ -73,6 +102,8 @@ const Content = () => {
                 release_date: new Date().toISOString().split('T')[0],
                 type: 'movie'
             });
+            setTmdbId('');
+            setAddMode('manual');
             fetchContent();
         } catch (error) {
             console.error('Error adding content:', error);
@@ -198,22 +229,69 @@ const Content = () => {
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-400 mb-1">Content Type</label>
-                                    <div className="flex gap-4">
-                                        <label className={`flex-1 cursor-pointer border p-3 rounded-xl text-center transition ${formData.type === 'movie' ? 'bg-primary/20 border-primary text-primary' : 'border-white/10 hover:bg-white/5'}`}>
-                                            <input type="radio" name="type" value="movie" className="hidden" checked={formData.type === 'movie'} onChange={handleChange} />
-                                            <Film className="mx-auto mb-1" size={20} />
-                                            Movie
-                                        </label>
-                                        <label className={`flex-1 cursor-pointer border p-3 rounded-xl text-center transition ${formData.type === 'series' ? 'bg-purple-500/20 border-purple-500 text-purple-400' : 'border-white/10 hover:bg-white/5'}`}>
-                                            <input type="radio" name="type" value="series" className="hidden" checked={formData.type === 'series'} onChange={handleChange} />
-                                            <Tv className="mx-auto mb-1" size={20} />
-                                            Series
-                                        </label>
-                                    </div>
+                            {/* Mode Toggle */}
+                            <div className="flex bg-white/5 p-1 rounded-lg mb-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setAddMode('manual')}
+                                    className={`flex-1 py-2 rounded-md text-sm font-medium transition ${addMode === 'manual' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    Manual Entry
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setAddMode('auto')}
+                                    className={`flex-1 py-2 rounded-md text-sm font-medium transition ${addMode === 'auto' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    Auto Fetch (TMDB)
+                                </button>
+                            </div>
+
+                            {/* Content Type Selection (Always Visible) */}
+                            <div className="col-span-2">
+                                <label className="block text-sm font-medium text-gray-400 mb-1">Content Type</label>
+                                <div className="flex gap-4">
+                                    <label className={`flex-1 cursor-pointer border p-3 rounded-xl text-center transition ${formData.type === 'movie' ? 'bg-primary/20 border-primary text-primary' : 'border-white/10 hover:bg-white/5'}`}>
+                                        <input type="radio" name="type" value="movie" className="hidden" checked={formData.type === 'movie'} onChange={handleChange} />
+                                        <Film className="mx-auto mb-1" size={20} />
+                                        Movie
+                                    </label>
+                                    <label className={`flex-1 cursor-pointer border p-3 rounded-xl text-center transition ${formData.type === 'series' ? 'bg-purple-500/20 border-purple-500 text-purple-400' : 'border-white/10 hover:bg-white/5'}`}>
+                                        <input type="radio" name="type" value="series" className="hidden" checked={formData.type === 'series'} onChange={handleChange} />
+                                        <Tv className="mx-auto mb-1" size={20} />
+                                        Series
+                                    </label>
                                 </div>
+                            </div>
+
+                            {/* TMDB Input Section */}
+                            {addMode === 'auto' && (
+                                <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl mb-4">
+                                    <label className="block text-sm font-medium text-blue-300 mb-2">TMDB ID</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            className="input-field flex-1"
+                                            placeholder={`Enter TMDB ID for this ${formData.type}`}
+                                            value={tmdbId}
+                                            onChange={(e) => setTmdbId(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleFetchTMDB}
+                                            disabled={!tmdbId || isFetchingTmdb}
+                                            className="btn-primary whitespace-nowrap px-4"
+                                        >
+                                            {isFetchingTmdb ? 'Fetching...' : 'Fetch Data'}
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-blue-300/60 mt-2">
+                                        Enter the ID from themoviedb.org URL (e.g. 550 for Fight Club)
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-4">
 
                                 <div className="col-span-2">
                                     <label className="block text-sm font-medium text-gray-400 mb-1">Title</label>
