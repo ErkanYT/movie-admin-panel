@@ -409,6 +409,38 @@ const SeasonManager = ({ series, onClose }) => {
         }
     };
 
+    const deleteSeason = async (seasonId) => {
+        if (confirm('Are you sure you want to delete this season and all its episodes?')) {
+            try {
+                await axios.delete(`/api/content/seasons/${seasonId}`);
+                fetchDetails();
+            } catch (error) {
+                console.error('Error deleting season:', error);
+                alert('Failed to delete season');
+            }
+        }
+    };
+
+    const deleteEpisode = async (episodeId) => {
+        if (confirm('Are you sure you want to delete this episode?')) {
+            try {
+                await axios.delete(`/api/content/episodes/${episodeId}`);
+                // Optimistic update locally or re-fetch
+                const updatedSeasons = seasons.map(s => {
+                    if (s.episodes) {
+                        return { ...s, episodes: s.episodes.filter(ep => ep.id !== episodeId) };
+                    }
+                    return s;
+                });
+                setSeasons(updatedSeasons);
+            } catch (error) {
+                console.error('Error deleting episode:', error);
+                alert('Failed to delete episode');
+                fetchDetails(); // Revert on error
+            }
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
             <div className="glass-panel w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -444,10 +476,16 @@ const SeasonManager = ({ series, onClose }) => {
                                             {season.episodes?.length || 0} Episodes
                                         </span>
                                     </div>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); deleteSeason(season.id); }}
+                                        className="text-red-400 hover:text-red-300 p-1 hover:bg-white/10 rounded"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
                                 </div>
 
                                 {expandedSeason === season.id && (
-                                    <div className="p-4 bg-black/20 border-t border-white/10">
+                                    <div className="p-4 bg-black/20 border-t border-white/10" onClick={(e) => e.stopPropagation()}>
                                         <div className="mb-4 grid grid-cols-12 gap-2 items-end">
                                             <div className="col-span-1">
                                                 <label className="text-xs text-gray-500">No.</label>
@@ -502,7 +540,12 @@ const SeasonManager = ({ series, onClose }) => {
                                                         <td className="py-2 px-2">{ep.title}</td>
                                                         <td className="py-2 px-2 text-gray-500 truncate max-w-[200px]">{ep.video_url}</td>
                                                         <td className="py-2 px-2 text-right">
-                                                            <button className="text-red-400 hover:text-red-300"><Trash2 size={14} /></button>
+                                                            <button
+                                                                onClick={() => deleteEpisode(ep.id)}
+                                                                className="text-red-400 hover:text-red-300"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
