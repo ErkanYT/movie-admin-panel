@@ -6,6 +6,7 @@ import Content from './pages/Content';
 import Login from './pages/Login'; // Login page
 import Settings from './pages/Settings';
 import RefererManager from './pages/RefererManager';
+import Requests from './pages/Requests';
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/content" element={<Content />} />
+                        <Route path="/requests" element={<Requests />} />
                         <Route path="/referers" element={<RefererManager />} />
                         <Route path="/settings" element={<Settings />} />
                     </Route>

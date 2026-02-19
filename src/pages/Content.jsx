@@ -77,11 +77,17 @@ const Content = () => {
 
     const handleDelete = async (id) => {
         if (confirm('Are you sure you want to delete this content?')) {
+            // Optimistic UI update
+            const originalList = [...contentList];
+            setContentList(contentList.filter(item => item.id !== id));
+
             try {
                 await axios.delete(`/api/content/${id}`);
-                fetchContent();
             } catch (error) {
                 console.error('Error deleting content:', error);
+                // Revert if failed
+                setContentList(originalList);
+                alert('Failed to delete content');
             }
         }
     };
