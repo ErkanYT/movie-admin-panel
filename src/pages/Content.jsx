@@ -33,7 +33,9 @@ const Content = () => {
         category_id: 1,
         rating: 7.0,
         release_date: new Date().toISOString().split('T')[0],
-        type: 'movie' // 'movie' or 'series'
+        release_date: new Date().toISOString().split('T')[0],
+        type: 'movie', // 'movie' or 'series'
+        player_type: 'webview' // 'webview' or 'custom'
     });
 
     useEffect(() => {
@@ -106,7 +108,9 @@ const Content = () => {
                 category_id: 1,
                 rating: 7.0,
                 release_date: new Date().toISOString().split('T')[0],
-                type: 'movie'
+                release_date: new Date().toISOString().split('T')[0],
+                type: 'movie',
+                player_type: 'webview'
             });
             setTmdbId('');
             setAddMode('manual');
@@ -332,10 +336,37 @@ const Content = () => {
                                 </div>
 
                                 {formData.type === 'movie' && (
-                                    <div className="col-span-2">
-                                        <label className="block text-sm font-medium text-gray-400 mb-1">Video URL</label>
-                                        <input name="video_url" className="input-field" placeholder="https://..." value={formData.video_url} onChange={handleChange} />
-                                    </div>
+                                    <>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-400 mb-1">Video URL</label>
+                                            <input name="video_url" className="input-field" placeholder="https://..." value={formData.video_url} onChange={handleChange} />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-400 mb-1">Player Type</label>
+                                            <div className="flex gap-4">
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="player_type"
+                                                        value="webview"
+                                                        checked={formData.player_type === 'webview'}
+                                                        onChange={handleChange}
+                                                    />
+                                                    <span className="text-sm">WebView (Default)</span>
+                                                </label>
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="player_type"
+                                                        value="custom"
+                                                        checked={formData.player_type === 'custom'}
+                                                        onChange={handleChange}
+                                                    />
+                                                    <span className="text-sm">Custom Player (MP4/HLS)</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </>
                                 )}
                             </div>
 
@@ -366,7 +397,7 @@ const SeasonManager = ({ series, onClose }) => {
     const [expandedSeason, setExpandedSeason] = useState(null);
 
     // New Episode State
-    const [newEpisode, setNewEpisode] = useState({ title: '', video_url: '', episode_number: 1 });
+    const [newEpisode, setNewEpisode] = useState({ title: '', video_url: '', episode_number: 1, player_type: 'webview' });
 
     useEffect(() => {
         fetchDetails();
@@ -402,7 +433,7 @@ const SeasonManager = ({ series, onClose }) => {
                 ...newEpisode,
                 duration: 45 // Default duration mock
             });
-            setNewEpisode({ title: '', video_url: '', episode_number: newEpisode.episode_number + 1 });
+            setNewEpisode({ title: '', video_url: '', episode_number: newEpisode.episode_number + 1, player_type: 'webview' });
             fetchDetails();
         } catch (error) {
             console.error('Error adding episode:', error);
@@ -513,6 +544,26 @@ const SeasonManager = ({ series, onClose }) => {
                                                     value={newEpisode.video_url}
                                                     onChange={e => setNewEpisode({ ...newEpisode, video_url: e.target.value })}
                                                 />
+                                                <div className="flex gap-3 mt-1">
+                                                    <label className="flex items-center gap-1 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="ep_player_type"
+                                                            checked={newEpisode.player_type === 'webview'}
+                                                            onChange={() => setNewEpisode({ ...newEpisode, player_type: 'webview' })}
+                                                        />
+                                                        <span className="text-[10px] text-gray-400">WebView</span>
+                                                    </label>
+                                                    <label className="flex items-center gap-1 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="ep_player_type"
+                                                            checked={newEpisode.player_type === 'custom'}
+                                                            onChange={() => setNewEpisode({ ...newEpisode, player_type: 'custom' })}
+                                                        />
+                                                        <span className="text-[10px] text-gray-400">Custom</span>
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div className="col-span-2">
                                                 <button
