@@ -33,7 +33,9 @@ const Content = () => {
         category_id: 1,
         rating: 7.0,
         release_date: new Date().toISOString().split('T')[0],
-        type: 'movie' // 'movie' or 'series'
+        release_date: new Date().toISOString().split('T')[0],
+        type: 'movie', // 'movie' or 'series'
+        player_type: 'webview' // 'webview' or 'custom'
     });
 
     useEffect(() => {
@@ -106,7 +108,9 @@ const Content = () => {
                 category_id: 1,
                 rating: 7.0,
                 release_date: new Date().toISOString().split('T')[0],
-                type: 'movie'
+                release_date: new Date().toISOString().split('T')[0],
+                type: 'movie',
+                player_type: 'webview'
             });
             setTmdbId('');
             setAddMode('manual');
@@ -332,10 +336,37 @@ const Content = () => {
                                 </div>
 
                                 {formData.type === 'movie' && (
-                                    <div className="col-span-2">
-                                        <label className="block text-sm font-medium text-gray-400 mb-1">Video URL</label>
-                                        <input name="video_url" className="input-field" placeholder="https://..." value={formData.video_url} onChange={handleChange} />
-                                    </div>
+                                    <>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-400 mb-1">Video URL</label>
+                                            <input name="video_url" className="input-field" placeholder="https://..." value={formData.video_url} onChange={handleChange} />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="block text-sm font-medium text-gray-400 mb-1">Player Type</label>
+                                            <div className="flex gap-4">
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="player_type"
+                                                        value="webview"
+                                                        checked={formData.player_type === 'webview'}
+                                                        onChange={handleChange}
+                                                    />
+                                                    <span className="text-sm">WebView (Default)</span>
+                                                </label>
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="player_type"
+                                                        value="custom"
+                                                        checked={formData.player_type === 'custom'}
+                                                        onChange={handleChange}
+                                                    />
+                                                    <span className="text-sm">Custom Player (MP4/HLS)</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </>
                                 )}
                             </div>
 
@@ -366,7 +397,7 @@ const SeasonManager = ({ series, onClose }) => {
     const [expandedSeason, setExpandedSeason] = useState(null);
 
     // New Episode State
-    const [newEpisode, setNewEpisode] = useState({ title: '', video_url: '', episode_number: 1 });
+    const [newEpisode, setNewEpisode] = useState({ title: '', video_url: '', episode_number: 1, player_type: 'webview' });
 
     useEffect(() => {
         fetchDetails();
@@ -402,10 +433,42 @@ const SeasonManager = ({ series, onClose }) => {
                 ...newEpisode,
                 duration: 45 // Default duration mock
             });
-            setNewEpisode({ title: '', video_url: '', episode_number: newEpisode.episode_number + 1 });
+            setNewEpisode({ title: '', video_url: '', episode_number: newEpisode.episode_number + 1, player_type: 'webview' });
             fetchDetails();
         } catch (error) {
             console.error('Error adding episode:', error);
+        }
+    };
+
+    const deleteSeason = async (seasonId) => {
+        if (confirm('Are you sure you want to delete this season and all its episodes?')) {
+            try {
+                await axios.delete(`/api/content/seasons/${seasonId}`);
+                fetchDetails();
+            } catch (error) {
+                console.error('Error deleting season:', error);
+                alert('Failed to delete season');
+            }
+        }
+    };
+
+    const deleteEpisode = async (episodeId) => {
+        if (confirm('Are you sure you want to delete this episode?')) {
+            try {
+                await axios.delete(`/api/content/episodes/${episodeId}`);
+                // Optimistic update locally or re-fetch
+                const updatedSeasons = seasons.map(s => {
+                    if (s.episodes) {
+                        return { ...s, episodes: s.episodes.filter(ep => ep.id !== episodeId) };
+                    }
+                    return s;
+                });
+                setSeasons(updatedSeasons);
+            } catch (error) {
+                console.error('Error deleting episode:', error);
+                alert('Failed to delete episode');
+                fetchDetails(); // Revert on error
+            }
         }
     };
 
@@ -444,10 +507,16 @@ const SeasonManager = ({ series, onClose }) => {
                                             {season.episodes?.length || 0} Episodes
                                         </span>
                                     </div>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); deleteSeason(season.id); }}
+                                        className="text-red-400 hover:text-red-300 p-1 hover:bg-white/10 rounded"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
                                 </div>
 
                                 {expandedSeason === season.id && (
-                                    <div className="p-4 bg-black/20 border-t border-white/10">
+                                    <div className="p-4 bg-black/20 border-t border-white/10" onClick={(e) => e.stopPropagation()}>
                                         <div className="mb-4 grid grid-cols-12 gap-2 items-end">
                                             <div className="col-span-1">
                                                 <label className="text-xs text-gray-500">No.</label>
@@ -475,6 +544,26 @@ const SeasonManager = ({ series, onClose }) => {
                                                     value={newEpisode.video_url}
                                                     onChange={e => setNewEpisode({ ...newEpisode, video_url: e.target.value })}
                                                 />
+                                                <div className="flex gap-3 mt-1">
+                                                    <label className="flex items-center gap-1 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="ep_player_type"
+                                                            checked={newEpisode.player_type === 'webview'}
+                                                            onChange={() => setNewEpisode({ ...newEpisode, player_type: 'webview' })}
+                                                        />
+                                                        <span className="text-[10px] text-gray-400">WebView</span>
+                                                    </label>
+                                                    <label className="flex items-center gap-1 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="ep_player_type"
+                                                            checked={newEpisode.player_type === 'custom'}
+                                                            onChange={() => setNewEpisode({ ...newEpisode, player_type: 'custom' })}
+                                                        />
+                                                        <span className="text-[10px] text-gray-400">Custom</span>
+                                                    </label>
+                                                </div>
                                             </div>
                                             <div className="col-span-2">
                                                 <button
@@ -502,7 +591,12 @@ const SeasonManager = ({ series, onClose }) => {
                                                         <td className="py-2 px-2">{ep.title}</td>
                                                         <td className="py-2 px-2 text-gray-500 truncate max-w-[200px]">{ep.video_url}</td>
                                                         <td className="py-2 px-2 text-right">
-                                                            <button className="text-red-400 hover:text-red-300"><Trash2 size={14} /></button>
+                                                            <button
+                                                                onClick={() => deleteEpisode(ep.id)}
+                                                                className="text-red-400 hover:text-red-300"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
