@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-import { API_URL } from '../config';
-
 const Login = () => {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
@@ -16,7 +13,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${API_URL}/api/auth/login`, formData);
+            const res = await axios.post(`/api/auth/login`, formData);
 
             // Save token
             localStorage.setItem('token', res.data.token);

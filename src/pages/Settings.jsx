@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Save, RefreshCw, AlertTriangle, Smartphone, Globe, Shield } from 'lucide-react';
 
-import { API_URL } from '../config';
-
+import { AlertTriangle, Globe, RefreshCw, Save, Shield, Smartphone } from 'lucide-react';
 const Settings = () => {
     const [settings, setSettings] = useState({
         app_name: '',
@@ -25,7 +24,7 @@ const Settings = () => {
 
     const fetchSettings = async () => {
         try {
-            const res = await axios.get(`${API_URL}/api/settings`);
+            const res = await axios.get(`/api/settings`);
             setSettings(res.data);
             setLoading(false);
         } catch (err) {
@@ -50,7 +49,7 @@ const Settings = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${API_URL}/api/settings/update`, settings, {
+            await axios.post(`/api/settings/update`, settings, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessage('Settings updated successfully!');

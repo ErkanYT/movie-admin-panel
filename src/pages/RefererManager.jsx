@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaTrash, FaPlus, FaGlobe } from 'react-icons/fa';
-import { API_URL } from '../config';
-
+import axios from 'axios';
 const Container = styled.div`
   padding: 20px;
   color: white;
@@ -157,9 +156,8 @@ const RefererManager = () => {
 
     const fetchReferers = async () => {
         try {
-            const response = await fetch(`${API_URL}/referers`);
-            const data = await response.json();
-            setReferers(data);
+            const response = await axios.get('/api/referers');
+            setReferers(response.data);
         } catch (error) {
             console.error('Error fetching referers:', error);
         }
@@ -168,9 +166,7 @@ const RefererManager = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this referer?')) {
             try {
-                await fetch(`${API_URL}/referers/${id}`, {
-                    method: 'DELETE',
-                });
+                await axios.delete(`/api/referers/${id}`);
                 fetchReferers();
             } catch (error) {
                 console.error('Error deleting referer:', error);
@@ -181,13 +177,7 @@ const RefererManager = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${API_URL}/referers`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
+            await axios.post('/api/referers', formData);
             setIsModalOpen(false);
             setFormData({ site_name: '', url: '', is_global: false });
             fetchReferers();
