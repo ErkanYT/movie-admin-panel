@@ -1,0 +1,139 @@
+﻿[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+node.exe : [1m[33m[pl
+ugin:vite:esbuild][39m
+[22m [33m[plugin vite
+:esbuild] src/pages/Con
+tent.jsx: [33mDuplicat
+e key "release_date" in
+ object literal[33m
+At C:\Program Files\nod
+ejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CL
+I_JS $args
++   ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([1m[33m[plu   
+ gi...ct literal[3    
+3m:String) [], Rem    o
+teException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+34 |          rating: 7
+.0,
+35 |          release_d
+ate: new Date().toISOSt
+ring().split('T')[0],
+36 |          release_d
+ate: new Date().toISOSt
+ring().split('T')[0],
+   |          ^
+37 |          type: 'mo
+vie', // 'movie' or 'se
+ries'
+38 |          player_ty
+pe: 'webview' // 'webvi
+ew' or 'custom'
+[39m
+[1m[33m[plugin:vite:e
+sbuild][39m[22m [33m
+[plugin vite:esbuild] s
+rc/pages/Content.jsx: 
+[33mDuplicate key "rele
+ase_date" in object lit
+eral[33m
+109|                  r
+ating: 7.0,
+110|                  r
+elease_date: new Date()
+.toISOString().split('T
+')[0],
+111|                  r
+elease_date: new Date()
+.toISOString().split('T
+')[0],
+   |                  ^
+112|                  t
+ype: 'movie',
+113|                  p
+layer_type: 'webview'
+[39m
+[32mÔ£ô[39m 45 modules transformed.
+[31mx[39m Build faile
+d in 950ms
+[31merror during build
+:
+[31m[vite]: Rollup fai
+led to resolve import "
+styled-components" from
+ "C:/Users/Erkan/Deskto
+p/movie/admin-portal/ad
+min-frontend/src/pages/
+RefererManager.jsx".
+This is most likely uni
+ntended because it can 
+break your application 
+at runtime.
+If you do want to exter
+nalize this module expl
+icitly add it to
+`build.rollupOptions.ex
+ternal`[31m
+    at viteWarn (file:/
+//C:/Users/Erkan/Deskto
+p/movie/admin-portal/ad
+min-frontend/node_modul
+es/vite/dist/node/chunk
+s/dep-BK3b2jBa.js:65855
+:17)
+    at onwarn (file:///
+C:/Users/Erkan/Desktop/
+movie/admin-portal/admi
+n-frontend/node_modules
+/@vitejs/plugin-react/d
+ist/index.js:90:7)
+    at onRollupWarning 
+(file:///C:/Users/Erkan
+/Desktop/movie/admin-po
+rtal/admin-frontend/nod
+e_modules/vite/dist/nod
+e/chunks/dep-BK3b2jBa.j
+s:65885:5)
+    at onwarn (file:///
+C:/Users/Erkan/Desktop/
+movie/admin-portal/admi
+n-frontend/node_modules
+/vite/dist/node/chunks/
+dep-BK3b2jBa.js:65550:7
+)
+    at file:///C:/Users
+/Erkan/Desktop/movie/ad
+min-portal/admin-fronte
+nd/node_modules/rollup/
+dist/es/shared/node-ent
+ry.js:20972:13
+    at Object.logger [a
+s onLog] (file:///C:/Us
+ers/Erkan/Desktop/movie
+/admin-portal/admin-fro
+ntend/node_modules/roll
+up/dist/es/shared/node-
+entry.js:22945:9)
+    at ModuleLoader.han
+dleInvalidResolvedId (f
+ile:///C:/Users/Erkan/D
+esktop/movie/admin-port
+al/admin-frontend/node_
+modules/rollup/dist/es/
+shared/node-entry.js:21
+689:26)
+    at file:///C:/Users
+/Erkan/Desktop/movie/ad
+min-portal/admin-fronte
+nd/node_modules/rollup/
+dist/es/shared/node-ent
+ry.js:21647:26[39m

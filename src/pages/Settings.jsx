@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Save, RefreshCw, AlertTriangle, Smartphone, Globe, Shield } from 'lucide-react';
 
-import { AlertTriangle, Globe, RefreshCw, Save, Shield, Smartphone } from 'lucide-react';
 const Settings = () => {
     const [settings, setSettings] = useState({
         app_name: '',

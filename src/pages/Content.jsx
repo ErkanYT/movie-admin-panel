@@ -33,7 +33,6 @@ const Content = () => {
         category_id: 1,
         rating: 7.0,
         release_date: new Date().toISOString().split('T')[0],
-        release_date: new Date().toISOString().split('T')[0],
         type: 'movie', // 'movie' or 'series'
         player_type: 'webview' // 'webview' or 'custom'
     });
@@ -107,7 +106,6 @@ const Content = () => {
                 video_url: '',
                 category_id: 1,
                 rating: 7.0,
-                release_date: new Date().toISOString().split('T')[0],
                 release_date: new Date().toISOString().split('T')[0],
                 type: 'movie',
                 player_type: 'webview'
